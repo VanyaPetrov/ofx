@@ -6,6 +6,7 @@ namespace Mocoding.Ofx.Client.Interfaces
 {
     public interface IOfxClient
     {
+        OfxClientOptions Options { get; }
         Task<AccountTransactions> GetTransactions(Account account, TransactionsFilter filter = null);
         Task<Account[]> GetAccounts();
     }

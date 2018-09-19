@@ -3,7 +3,7 @@ using Mocoding.Ofx.Protocol;
 
 namespace Mocoding.Ofx
 {
-    public class OfxSerializer
+    public static class OfxSerializer
     {
         public const string Default103Header =
        @"OFXHEADER:100
@@ -18,27 +18,22 @@ NEWFILEUID:NONE
 
 ";
 
-        private readonly SgmlSerializer<OFX> _sgmlSerializer;
+        private static readonly SgmlSerializer<OFX> SgmlSerializer = new SgmlSerializer<OFX>();
 
-        public OfxSerializer()
+        public static string Serialize(OFX request)
         {
-            _sgmlSerializer = new SgmlSerializer<OFX>();
-        }
-
-        public string Serialize(OFX request)
-        {
-            var sgml = _sgmlSerializer.Serialize(request);
+            var sgml = SgmlSerializer.Serialize(request);
             return Default103Header + sgml;
         }
 
-        public OFX Deserialize(string responseBody)
+        public static OFX Deserialize(string responseBody)
         {
             var ofxDataStartIndex = responseBody.IndexOf("<OFX>", StringComparison.OrdinalIgnoreCase);
             if (ofxDataStartIndex == -1)
                 throw new FormatException("<OFX> element is not present in the response body");
             var sgml = responseBody.Substring(ofxDataStartIndex);
 
-            var result = _sgmlSerializer.Deserialize(sgml);
+            var result = SgmlSerializer.Deserialize(sgml);
 
             return result;
         }
